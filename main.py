@@ -4,12 +4,13 @@ import random
 import cv2
 import numpy as np
 
-img = cv2.imread('document3.png')
+img = cv2.imread('images/document1.jpg')
 
 img_gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
 
+blur = cv2.GaussianBlur(img_gray, (11, 11), 2)
 
-canny = cv2.Canny(img_gray, 100, 200)
+canny = cv2.Canny(blur, 10, 100)
 
 lines = cv2.HoughLines(canny, 1, np.pi / 180, 120)
 
@@ -21,8 +22,7 @@ if lines is not None:
         color = (random.randint(0, 255), random.randint(0, 255), random.randint(0, 255))
         rho = lines[i][0][0]
         theta = lines[i][0][1]
-        if theta == 0.0:
-            continue
+
         rhos.append(rho)
         thetas.append(theta)
 
@@ -64,7 +64,8 @@ for rho, theta in zip(rhos, thetas):
     pt1 = (int(x0 + 3000 * (-b)), int(y0 + 3000 * a))
     pt2 = (int(x0 - 3000 * (-b)), int(y0 - 3000 * a))
     cv2.line(img, pt1, pt2, color, 3, cv2.LINE_AA)
-
+#
+# cv2.imshow('img canny', canny)
 cv2.imshow('img orig', img)
 cv2.imwrite('houghline_after_nms2.jpg', img)
 cv2.waitKey(0)
